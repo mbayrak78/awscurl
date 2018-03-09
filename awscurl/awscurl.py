@@ -101,6 +101,15 @@ def make_request(method,
 
     def sha256_hash(val):
         return hashlib.sha256(val.encode('utf-8')).hexdigest()
+    
+    def uri_encode(input):
+        output = []
+        for ch in input:
+            if((ch >= 'A' and ch <= 'Z') or (ch >= 'a' and ch <= 'z') or (ch >= '0' and ch <= '9') or ch == '_' or ch == '-' or ch == '~' or ch == '.' or ch == '/'):
+                output.append(ch)
+            else:
+                output.append("%{0:02X}".format(ord(ch)))
+        return ''.join(output)
 
     if access_key is None or secret_key is None or security_token is None:
         try:
@@ -178,7 +187,7 @@ def make_request(method,
 
     # Step 7: Combine elements to create create canonical request
     canonical_request = (method + '\n' +
-                         canonical_uri + '\n' +
+                         uri_encode(canonical_uri) + '\n' +
                          canonical_querystring + '\n' +
                          canonical_headers + '\n' +
                          signed_headers + '\n' +
